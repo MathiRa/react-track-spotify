@@ -6,8 +6,7 @@
 npm install
 
 ## Config
-In *.env* file you need a token to get data from the api. In the following page
-https://developer.spotify.com/console/get-search-item/?q=Muse&type=track%2Cartist&market=&limit=5&offset=10&include_external= you can get the token to get access per one hour.
+In *.env* file you need put the information from api spotify
 
 ## Run Project in localhost
 

@@ -6,12 +6,11 @@ import ListItemText from '@mui/material/ListItemText';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import Avatar from '@mui/material/Avatar';
 import Typography from '@mui/material/Typography';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Button, List } from '@mui/material';
-import getSearchResults from '../services/api';
+import getSearchResults from '../../services/api';
 import { SearchWrapper } from './style';
-
-export default function Table({ tracks, nextPagination, setNexPagination }: any) {
+export default function Table({ tracks, nextPagination, setNexPagination, code, activeToken, setActiveToken }: any) {
 
     const [tracksToShow, setTracksToShow] = useState([]);
 
@@ -21,13 +20,13 @@ export default function Table({ tracks, nextPagination, setNexPagination }: any)
 
     const prepareData = (tracks: any, add = 0) => {
         const results = [] as any;
-        
+
         if (tracks && Object.keys(tracks).length > 0) {
-            tracks?.items.forEach((element: any) => {
+            tracks?.items?.forEach((element: any) => {
                 let artists: any[] = []
-                element?.artists.forEach((artist: { name: any; }) => artists.push(artist.name))
+                element?.artists?.forEach((artist: { name: any; }) => artists.push(artist.name))
                 results.push(
-                    <><ListItem alignItems="flex-start" key={element.uri} onClick={()=> window.open(element.external_urls.spotify, "_blank")}>
+                    <div key={element.uri}><ListItem alignItems="flex-start" onClick={() => window.open(element.external_urls.spotify, "_blank")}>
                         <ListItemAvatar>
                             <Avatar alt="song" src={element.album.images[0].url} />
                         </ListItemAvatar>
@@ -43,7 +42,7 @@ export default function Table({ tracks, nextPagination, setNexPagination }: any)
                                     {artists.join(', ')}
                                 </Typography>
                             </React.Fragment>} />
-                    </ListItem><Divider variant="inset" component="li" /></>
+                    </ListItem><Divider variant="inset" component="li" /></div>
                 );
             });
         }
@@ -54,11 +53,13 @@ export default function Table({ tracks, nextPagination, setNexPagination }: any)
             setTracksToShow(results)
         }
     }
+
     const handleClickPagination = async () => {
-        const result = await getSearchResults('', 0, nextPagination)
-        setNexPagination(result.next)
+        const result = await getSearchResults(setActiveToken, code, activeToken, '', 0, nextPagination)
+        setNexPagination(result?.next)
         prepareData(result, 1)
     }
+
     const existResults = tracksToShow.length > 0;
     return (
         <SearchWrapper>
